@@ -126,3 +126,281 @@ public function method() {
 With this call a view.blade.php
 
 ### Passing data to views
+
+## BLADE
+`@yield('content')` presents just a bloque of content defined in a @section
+
+`@extends('dir.page')` extend the page of a directory
+
+`@section` open  a section and for close just put `@endsection` or `@stop`
+
+`@if` and `@endif`
+`@foreach` and `@endforeach`
+
+## MIGRATIONS
+### Generating Migrations
+```php artisan make:migration create_user_table``` 
+The new migration will be placed in your `database/migrations` directory.
+
+The `--table` and `--create` options may also be used to indicate the name of the table and whether the migration will be creating a new table. These options simply pre-fill the generated migration stub file with the specified table:
+
+```
+php artisan make:migration create_users_table --create=users
+
+php artisan make:migration add_votes_to_users_table --table=users
+```
+
+If you would like to specify a custom output path for the generated migration, you may use the  `--path` option when executing the `make:migration` command. The given path should be relative to your application's base path.
+
+### Migration Structure
+A migration class contains two moethods: `up` and `down`. The `up` method is used to add new tables, columns, or indexes to your database, while the `down` method shoul simply reverse the operations performed by the `up` method.
+
+### SCHEMA BUILDER
+###  Creating Tables
+To create a new database table, use the `create` method on the `Schema` facade. The `create` method accepts two arguments. The first is the name of the table, while the second is a `Closure` which reveives a `Blueprint` object that may be used to define the new table:
+
+```php
+Schema::create('users', function (Blueprint $table) {
+  $table->increments('id');
+});
+```
+#### Checking For Table / Column Existence
+You may easily check for the existence of a table or column using the `hasTable` and `hasColumn` methods:
+
+```php
+
+if(Schema::hasTable('users')) {
+  //
+}
+
+if(Schema::hasColumn('users', 'email')) {
+  //
+}
+```
+
+#### Connection & Storage Engine
+if you want to perform a schema operation on a database connection that is not your default connection, use the `connection` method:
+
+```php
+Schema::connection('foo')->create('users', function (Blueprint $table) {
+    $table->increments('id');
+});
+```
+You may use the `engine` property on the schema builder to define the table's storage engine:
+
+```php
+Schema::create('users', function (Blueprint $table) {
+    $table->engine('InnoDB');
+    
+    $table->increments('id');
+});
+```
+
+### Renaming / Dropping Tables
+To rename an existing database table, use the `rename` method:
+```php
+Schema::rename($from, $to);
+```
+
+To Drop an existing table, you may use the `drop` or `dropIfExists` mehtods:
+```php
+Schema::drop('users');
+
+Schema::dropIfExists('users');
+```
+#### Renaming Tables With Foreign Keys
+Before renaming a table, you should verify that any foreign key constrains on the table have an explicit name in your migration files instead of letting laravel assign a convention based name. Otherwise, the foreign key constraint name will refer to the old table name.
+
+### Runing Migrations
+for run migrations just
+`php artisan migrate`
+
+### Rollback in last migration
+just `php artisan migrate:rollback`
+
+### Columns
+for change the column just
+```php
+    public function up()
+    {
+        Schema::table('posts', function (Blueprint $table) {
+            //
+            $table->integer('is_admin')->unsigned();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     * 
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('posts', function (Blueprint $table) {
+            //
+            $table->dropColumn('is_admin');
+        });
+    }
+
+```
+
+### Reset in all tables
+with this rollback in all tables of the databases
+`php artisan migrate:reset`
+
+
+### Refresh
+trigger the reset an run migrate again
+`php artisan migrate:refresh`
+
+### Migrations Status
+`php artisan migrate:status`
+
+## RAW SQL QUERIES
+### Insert
+```php
+Route::get('/insert', function() {
+  
+  DB::insert('insert into posts(title, content) values(?,?)',
+  ['PHP with Laravel', 'Laravel is the best thing that has happened to PHP']);
+
+});
+```
+
+### Select | Read
+```php
+function displayTitle($elm) {
+  echo $elm->title;
+}
+
+Route::get('/read', function() {
+  $results = DB::select('select * from posts where id = ?', [1]);
+  //Return a array
+
+  array_map("displayTitle", $results);
+  
+});
+```
+
+### Delete
+```php
+Route::get('/delete', function() {
+  $deleted = DB::delete('delete from posts where id=?',[1]);
+  return $deleted;
+});
+
+```
+
+### Update
+```php
+Route::get('/update', function() {
+  $updated = DB::update('update posts set title=? where id=?',['Updated title', 1]);
+
+  return $updated;
+});
+```
+
+## DATABASE - ELOQUENT / ORM
+### Create a new model
+`php artisan make:model Post` if utilize the flag `-m` make a migration too
+
+### Get all records
+```php
+use App\Post; // impor a model
+
+
+Route::get('/read', function() {
+
+  $posts = Post::all();  //return Array
+
+  foreach($posts as $post) {
+    return $post->title;
+  }
+
+});
+```
+
+### Find a record
+```php
+Route::get('/find', function() {
+  $post = Post::find(2);  //return Object
+  return $post->title;
+});
+```
+
+### Find with conditions
+```php
+Route::get('/findwhere', function() {
+  $post = Post::where('id', 3)->orderBy('id', 'desc')->take(1)->get();
+  return $post;
+});
+```
+
+### Basic insert
+```php
+Route::get('/basicinsert', function() {
+
+  $post = new Post;
+  $post->title = 'New Eloquent title insert';
+  $post->content = 'Wow eleoquent is really cool, look at this content';
+
+  $post->save();
+
+});
+```
+
+### Update
+```php
+Route::get('/basicinsert', function() {
+
+  $post = Post::find(4);
+  $post->title = 'Updated the title';
+  $post->content = 'Wow eleoquent is really cool, look at this content';
+
+  $post->save();
+
+});
+```
+
+### Creating data and configuring mass assignment
+```php
+  
+```
+
+
+## DATABASE - TINKER
+
+## DATABASE - ELOQUENTE ONE TO ONE RELATIONSHIP CRUD
+
+## DATABASE - ELOQUENT ONE TO MANY RELATIONSHIP CRUD
+
+## DATABASE - ELOQUENT MANY TO MANY RELATIONSHIP CRUD
+
+## DATABASE - ELOQUENT POLYMORPHIC MANY TO MANY RELATIONSHIP CRUD
+
+## FORMS AND VALIDATION
+
+## FORMS - PACKAGES AND VALIDATION
+
+## DATABASE - SOME MORE MODEL MANIPULATION
+
+## FORMS - UPLOADING FILES
+
+## FORM - LOGIN
+
+## MIDDLEWARE - SECURITY / PROTECTION
+
+## LARAVEL SESSIONS
+
+## LARAVEL - SENDING EMAIL / API
+
+## GIT AND GITHUB - VERSION CONTROL
+
+## APPLICATION
+
+## APPLICATION - POSTS
+## APPLICATION - CATEGORIES
+## APPLICATION - MEDIA
+## APPLICATION - COMMENTS
+
+## EXTRA FEATURES
