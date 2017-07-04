@@ -349,7 +349,7 @@ Route::get('/basicinsert', function() {
 });
 ```
 
-### Update
+### Insert or Update
 ```php
 Route::get('/basicinsert', function() {
 
@@ -365,6 +365,95 @@ Route::get('/basicinsert', function() {
 ### Creating data and configuring mass assignment
 ```php
   
+```
+
+### Update with eloquent
+```php
+Route::get('/update', function() {
+  Post::where('id', 2)->where('is_admin', 0)->update(['title'=>'New PHP title', 'content'=>'I love web development']);
+});
+```
+
+### Delete
+```php
+Route::get('/delete', function() {
+  $post = Post::find(2); // id 2
+  $post->delete();
+});
+
+//OR
+Route::get('/delete', function() {
+  Post::destroy(3); //id 3
+});
+
+// Delete multiples rows
+
+Route::get('/delete', function() {
+  Post::destroy([4,5]);
+});
+```
+
+### Soft Deleting / Trashing
+
+```php
+  //migrantion
+  use Illuminate\Database\Migrations\Migration;
+
+class AddDeletedAtColumnToPostsTables extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('posts', function (Blueprint $table) {
+            //
+            $table->softDeletes();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('posts', function (Blueprint $table) {
+            //
+
+            $table->dropColumn('deleted_at');
+        });
+    }
+}
+
+  //route
+  Route::get('/softdelete', function() {
+  Post::find(1)->delete();
+});
+```
+
+### Retrieve deleted with treshed
+```php
+Route::get('/readsoftdelete', function() {
+  // $post = Post::find(1);
+  // return $post;
+  $post = Post::withTrashed()->where('id', 1)->get();
+  return $post;
+
+});
+
+//OR
+Route::get('/readsoftdelete', function() {
+  // $post = Post::find(1);
+  // return $post;
+  $post = Post::onlyTrashed()->where('is_admin', 0)->get();
+  return $post;
+
+});
+
 ```
 
 

@@ -116,16 +116,47 @@ Route::get('/insert', function() {
 //   return $posts;
 // });
 
-Route::get('/basicinsert', function() {
+// Route::get('/basicinsert', function() {
 
-  $post = Post::find(4);
-  $post->title = 'Changed the title';
-  $post->content = 'Wow eleoquent is really cool, look at this content';
+//   $post = new Post;
+//   $post->title = 'Changed the title';
+//   $post->content = 'Wow eleoquent is really cool, look at this content';
 
-  $post->save();
+//   $post->save();
 
-});
+// });
 
-Route::get('/create', function() {
-  Post::create(['title'=>'the create mehotd', 'content'=>'WOW I\'m learnig a lot with Edwin Diaz']);
+// Route::get('/create', function() {
+//   Post::create(['title'=>'the create mehotd', 'content'=>'WOW I\'m learnig a lot with Edwin Diaz']);
+// });
+
+
+// Route::get('/update', function() {
+//   Post::where('id', 2)->where('is_admin', 0)->update(['title'=>'New PHP title', 'content'=>'I love web development']);
+// });
+
+
+// Route::get('/delete', function() {
+//   $post = Post::find(2);
+//   $post->delete();
+// });
+
+// Route::get('/delete', function() {
+//   Post::destroy([4,5]);
+// });
+
+// Route::get('/softdelete', function() {
+//   Post::find(1)->delete();
+// });
+
+Route::get('/readsoftdelete', function() {
+  // $post = Post::find(1);
+  // return $post;
+
+  // $post = Post::withTrashed()->where('id', 1)->get();
+
+  // return $post;
+  $post = Post::onlyTrashed()->where('is_admin', 0)->get();
+  return $post;
+
 });
