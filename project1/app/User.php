@@ -23,4 +23,29 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    //One to One relationship
+    public function post() {
+
+        return $this->hasOne('App\Post');
+    }
+
+    //One to Many relationship
+    public function posts() {
+        return $this->hasMany('App\Post');
+    }
+
+    // Many to Many
+    public function roles() {
+        
+        return $this->belongsToMany('App\Role')->withPivot('created_at');
+
+        // To customize table name and columns follow the format below
+        //return $this->belongsToMany('App\Role', 'user-role', 'user_id', 'role_id');
+        
+    }
+
+    public function photos() {
+      return $this->morphMany('App\Photo', 'imageable');
+    }
 }

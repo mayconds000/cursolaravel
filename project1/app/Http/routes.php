@@ -1,5 +1,8 @@
 <?php
 use App\Post;
+use App\User;
+use App\Country;
+use App\Photo;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,12 +47,12 @@ use App\Post;
 |Application Routes
 */
 
-Route::get('/insert', function() {
+// Route::get('/insert', function() {
   
-  DB::insert('insert into posts(title, content) values(?,?)',
-  ['PHP Super cool', 'Its nice']);
+//   DB::insert('insert into posts(title, content) values(?,?)',
+//   ['PHP Super cool', 'Its nice']);
 
-});
+// });
 
 // function displayTitle($elm) {
 //   echo $elm->title;
@@ -79,9 +82,9 @@ Route::get('/insert', function() {
 
 
 /*
-|-------------------------------------
+|---------------------------------------------------------------
 | ELOQUENT | ORM
-|-------------------------------------
+|---------------------------------------------------------------
 */
 
 // Route::get('/read', function() {
@@ -126,9 +129,9 @@ Route::get('/insert', function() {
 
 // });
 
-// Route::get('/create', function() {
-//   Post::create(['title'=>'the create mehotd', 'content'=>'WOW I\'m learnig a lot with Edwin Diaz']);
-// });
+Route::get('/create', function() {
+  Post::create(['title'=>'the create mehotd', 'content'=>'WOW I\'m learnig a lot with Edwin Diaz']);
+});
 
 
 // Route::get('/update', function() {
@@ -149,14 +152,99 @@ Route::get('/insert', function() {
 //   Post::find(1)->delete();
 // });
 
-Route::get('/readsoftdelete', function() {
-  // $post = Post::find(1);
-  // return $post;
+// Route::get('/readsoftdelete', function() {
+//   // $post = Post::find(1);
+//   // return $post;
 
-  // $post = Post::withTrashed()->where('id', 1)->get();
+//   // $post = Post::withTrashed()->where('id', 1)->get();
 
-  // return $post;
-  $post = Post::onlyTrashed()->where('is_admin', 0)->get();
-  return $post;
+//   // return $post;
+//   $post = Post::onlyTrashed()->where('is_admin', 0)->get();
+//   return $post;
+
+// });
+
+// Route::get('/restore', function() {
+//   Post::withTrashed()->where('is_admin', 0)->restore();
+// });
+
+Route::get('/forcedelete', function() {
+
+  Post::onlyTrashed()->where('is_admin', '0')->forceDelete();
+});
+
+/*
+|---------------------------------------------------------------
+| ELOQUENT | Relationship
+|---------------------------------------------------------------
+*/
+//One to One relationship
+// Route::get('/user/{id}/post', function($id) {
+//   return User::find($id)->post->content;
+// });
+
+// Route::get('/post/{id}/user', function($id) {
+//   return Post::find($id)->user->name;
+// });
+
+// One to Many
+Route::get('/posts', function() {
+  $user = User::find(1);
+
+  foreach($user->posts as $post) {
+    echo $post->title . '<br>';
+  }
+
+});
+
+//Many to Many
+// Route::get('/user/{id}/role', function($id) {
+//   $user = User::find($id)->roles()->orderBy('id', 'desc')->get();
+
+//   return $user;
+
+//   // foreach($user->roles as $role) {
+//   //   echo $role->name;
+//   // }
+// });
+
+// Accessing the intermediate table / pivot
+// Route::get('/user/pivot', function() {
+//   $user = User::find(1);
+  
+//   foreach($user->roles as $role) {
+//     echo $role->pivot->created_at;
+//   }
+
+// });
+
+// Route::get('/user/country', function() {
+
+//   $country = Country::find(4);
+
+//   foreach($country->posts as $post) {
+//     return $post->title;
+//   }
+
+// });
+
+// Polymorphic Relations
+// Route::get('post/photo', function() {
+
+//   $posts = Post::find(1);
+
+//   foreach($posts->photos as $photo) {
+//     return $photo->path;
+//   }
+
+// });
+
+// Polymorphic Relations inverse
+Route::get('photo/{id}/post', function($id) {
+
+  $photo = Photo::findOrFail($id);
+
+  return $photo->imageable;
+
 
 });

@@ -28,7 +28,7 @@ Comando para desabilitar sites no apache
 ### permitindo acesso a pasta
 com o código abaixo consigo ter acesso ao pasta antes estava dando erro 403 forbiden access
 ```
-<Directory "path/to/folder"> 
+<Directory "path/to/folder/public"> 
   Options Indexes FollowSymLinks
   AllowOverride All
   Require all granted
@@ -456,16 +456,131 @@ Route::get('/readsoftdelete', function() {
 
 ```
 
+### Restore deleted / trashed records
+```php
+Route::get('/restore', function() {
+  Post::withTrashed()->where('is_admin', 0)->restore();
+});
 
-## DATABASE - TINKER
+``` 
 
-## DATABASE - ELOQUENTE ONE TO ONE RELATIONSHIP CRUD
+### Delete permanently
+```php
+Route::get('/forcedelete', function() {
+
+  Post::onlyTrashed()->where('is_admin', '0')->forceDelete();
+});
+``` 
+
+
+
+## DATABASE - ELOQUENTE RELATIONSHIPS
+### One to One
+Fisrt of all need to create a `user_id` in the table ex.
+```php
+  Schema::create('posts', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('user_id')->unsigned();
+            $table->string('title');
+            $table->text('content');
+            $table->timestamps();
+        });
+```
+
+After in model put the relashionship
+```php
+public function post() {
+  return $this->hasOne('App\Post');
+}
+```
+
+and in your routes
+```php
+Route::get('/user/{id}/post', function($id) {
+  return User::find($id)->post->content;
+});
+```
+
+#### When I want the inverse
+
+```php
+// Model
+public function post() {
+  return $this->belongsTo('App\User');
+}
+```
+
+```php
+// Routes
+Route::get('/post/{id}/user', function($id) {
+  return Post::find($id)->user->name;
+});
+```
+
+### One to Many
+```php
+//Model
+public function posts() {
+        return $this->hasMany('App\Post');
+    }
+
+// Routes
+Route::get('/posts', function() {
+  $user = User::find(1);
+
+  foreach($user->posts as $post) {
+    echo $post->title . '<br>';
+  }
+  
+});
+```
+### Many to Many
+preciso de uma tabela pivo para fazer a relação entre as outras duas tabelas por exemplo:
+`table1.id` <-> `pivotable.id_table1` - `pivotable.id_table2` <-> `table2.id`
+
+```php
+//Model User
+// Many to Many
+    public function roles() {
+        return $this->belongsToMany('App\Role');
+    }
+
+//Routes
+Route::get('/user/{id}/role', function($id) {
+  $user = User::find($id);
+
+  foreach($user->roles as $role) {
+    echo $role->name;
+  }
+});
+```
+### Quering intermediate table
+```php
+
+// Accessing the intermediate table / pivot
+Route::get('/user/pivot', function() {
+  $user = User::find(1);
+  
+  foreach($user->roles as $role) {
+    echo $role->pivot->created_at;
+  }
+
+});
+```
+
+### Has many to 
+
+
+
+## DATABASE - ELOQUENT ONE TO ONE RELATIONSHIP CRUD
 
 ## DATABASE - ELOQUENT ONE TO MANY RELATIONSHIP CRUD
 
 ## DATABASE - ELOQUENT MANY TO MANY RELATIONSHIP CRUD
 
 ## DATABASE - ELOQUENT POLYMORPHIC MANY TO MANY RELATIONSHIP CRUD
+
+## DATABASE - TINKER
 
 ## FORMS AND VALIDATION
 

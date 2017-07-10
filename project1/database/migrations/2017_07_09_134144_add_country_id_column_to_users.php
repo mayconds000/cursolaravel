@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddDeletedAtColumnToPostsTables extends Migration
+class AddCountryIdColumnToUsers extends Migration
 {
     /**
      * Run the migrations.
@@ -12,9 +12,9 @@ class AddDeletedAtColumnToPostsTables extends Migration
      */
     public function up()
     {
-        Schema::table('posts', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             //
-            $table->softDeletes();
+            $table->integer('country_id');
         });
     }
 
@@ -25,10 +25,9 @@ class AddDeletedAtColumnToPostsTables extends Migration
      */
     public function down()
     {
-        Schema::table('posts', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             //
-
-            $table->dropColumn('deleted_at');
+            $table->dropColumn('country_id');
         });
     }
 }

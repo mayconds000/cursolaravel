@@ -1,5 +1,4 @@
 <?php
-
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
@@ -7,7 +6,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Post extends Model
 {
-    use SoftDeletes;
+    // use SoftDeletes;
     
     // protected $table = 'posts';
     // protected $primaryKey = 'post_id';
@@ -19,5 +18,17 @@ class Post extends Model
         'title',
         'content'
     ];
+
+
+    //One to One relationship
+    public function user() {
+        return $this->belongsTo('App\User');
+    }
+
+    public function photos() {
+      return $this->morphMany('App\Photo', 'imageable');
+    }
+
+    
 
 }
