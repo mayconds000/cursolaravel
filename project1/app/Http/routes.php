@@ -240,11 +240,16 @@ Route::get('/posts', function() {
 // });
 
 // Polymorphic Relations inverse
+// Route::get('photo/{id}/post', function($id) {
+
+//   $photo = Photo::findOrFail($id);
+
+//   return $photo->imageable;
+
+
+// });
+
+// Many to Many Polymorphic
 Route::get('photo/{id}/post', function($id) {
-
-  $photo = Photo::findOrFail($id);
-
-  return $photo->imageable;
-
-
+  
 });
