@@ -129,9 +129,9 @@ use App\Photo;
 
 // });
 
-Route::get('/create', function() {
-  Post::create(['title'=>'the create mehotd', 'content'=>'WOW I\'m learnig a lot with Edwin Diaz']);
-});
+// Route::get('/create', function() {
+//   Post::create(['title'=>'the create mehotd', 'content'=>'WOW I\'m learnig a lot with Edwin Diaz']);
+// });
 
 
 // Route::get('/update', function() {
@@ -168,10 +168,10 @@ Route::get('/create', function() {
 //   Post::withTrashed()->where('is_admin', 0)->restore();
 // });
 
-Route::get('/forcedelete', function() {
+// Route::get('/forcedelete', function() {
 
-  Post::onlyTrashed()->where('is_admin', '0')->forceDelete();
-});
+//   Post::onlyTrashed()->where('is_admin', '0')->forceDelete();
+// });
 
 /*
 |---------------------------------------------------------------
@@ -188,14 +188,14 @@ Route::get('/forcedelete', function() {
 // });
 
 // One to Many
-Route::get('/posts', function() {
-  $user = User::find(1);
+// Route::get('/posts', function() {
+//   $user = User::find(1);
 
-  foreach($user->posts as $post) {
-    echo $post->title . '<br>';
-  }
+//   foreach($user->posts as $post) {
+//     echo $post->title . '<br>';
+//   }
 
-});
+// });
 
 //Many to Many
 // Route::get('/user/{id}/role', function($id) {
@@ -250,6 +250,14 @@ Route::get('/posts', function() {
 // });
 
 // Many to Many Polymorphic
-Route::get('photo/{id}/post', function($id) {
+// Route::get('photo/{id}/post', function($id) {
   
-});
+// });
+
+/*
+|---------------------------------------------------------------
+| Crud Application
+|---------------------------------------------------------------
+*/
+
+Route::resource('/posts', 'PostsController');
