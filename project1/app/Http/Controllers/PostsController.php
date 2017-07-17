@@ -17,9 +17,7 @@ class PostsController extends Controller
      */
     public function index()
     {
-
-        $posts = Post::all();
-
+        $posts = Post::latest();
         return view('posts.index', compact('posts'));
     }
 
@@ -39,18 +37,34 @@ class PostsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Requests\CreatePostRequest $request)
     {
 
-      $this->validate($request, [
-        'title'=> 'required',
-        'content'=> 'required'
-      ]);
+      // $this->validate($request, [
+      //   'title'=> 'required|max:4',
+      //   'content'=> 'required',
+      // ]);
+
+     $input = $request->all();
+
+     if($file = $request->file('file')) {
+
+       $name = $file->getClientOriginalName();
+
+       $file->move('images', $name);
+
+       $input['path'] = $name;
+
+     }
+
+     Post::create($input);
 
 
-       Post::create($request->all());
 
-       return redirect('posts');
+
+      //  Post::create($request->all());
+
+      //  return redirect('posts');
 
       //Post::create(['title'=>$request->title, 'content'=>$request->content]);
     }

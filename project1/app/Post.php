@@ -13,10 +13,10 @@ class Post extends Model
 
     protected $date = ['deleted_at'];
 
-
     protected $fillable = [
         'title',
-        'content'
+        'content',
+        'path'
     ];
 
 
@@ -31,6 +31,10 @@ class Post extends Model
 
     public function tags() {
       return $this->morphToMany('App\Tag', 'taggable');
+    }
+
+    public static function scopeLatest($query) {
+      return $query->orderBy('id', 'desc')->get();
     }
 
 }

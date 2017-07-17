@@ -3,6 +3,7 @@ use App\Post;
 use App\User;
 use App\Country;
 use App\Photo;
+use Carbon\Carbon;
 
 /*
 |--------------------------------------------------------------------------
@@ -260,4 +261,61 @@ use App\Photo;
 |---------------------------------------------------------------
 */
 
-Route::resource('/posts', 'PostsController');
+
+Route::group(['middlewareGroups' => 'web'], function() {
+  
+  Route::resource('/posts', 'PostsController');
+
+  Route::get('/dates', function() {
+
+    $date = new DateTime('now');
+
+    echo $date->format('d/m/Y');
+
+    echo '<br>';
+
+    echo Carbon::now()->addDays(10)->diffForHumans();
+
+    echo '<br>';
+
+    echo Carbon::now()->subDays(10);
+
+    echo '<br>';
+
+    echo Carbon::now()->subMonths(10);
+
+    echo '<br>';
+
+      echo Carbon::now()->yesterday();
+
+    echo '<br>';
+
+      echo Carbon::now()->tomorrow();
+
+
+    
+
+
+
+  });
+
+  Route::get('/getname', function() {
+    
+    $user = User::find(1);
+
+    echo $user->name;
+
+  });
+
+   Route::get('/setname', function() {
+    
+    $user = User::find(1);
+
+    $user->name = "gurren laggan";
+
+    $user->save();
+
+  });
+
+});
+
